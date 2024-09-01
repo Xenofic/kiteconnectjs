@@ -1,3 +1,5 @@
+import {CancelOrderParams, Varieties, ExitOrderParams, ModifyOrderParams, PlaceOrderParams} from "../interfaces";
+
 export type Exchanges =
   | Connect['EXCHANGE_NSE']
   | Connect['EXCHANGE_BSE']
@@ -1405,50 +1407,16 @@ export type Connect = {
    * @param params Order params. regular).
    */
   cancelOrder: (
-    variety: 'regular' | 'bo' | 'co' | 'amo' | 'iceberg' | 'auction',
+    variety: Varieties,
     order_id: number | string,
-    params?: {
-      /**
-       * Parent order id incase of multilegged orders.
-       */
-      parent_order_id?: string;
-    }
+    params?: CancelOrderParams
   ) => Promise<{ order_id: string }>;
 
   /**
    * Modify an open position's product type.
    * @param params params.
    */
-  convertPosition: (params: {
-    /**
-     * Exchange in which instrument is listed (NSE, BSE, NFO, BFO, CDS, MCX).
-     */
-    exchange: Exchanges;
-    /**
-     * Tradingsymbol of the instrument (ex. RELIANCE, INFY).
-     */
-    tradingsymbol: string;
-    /**
-     * Transaction type (BUY or SELL).
-     */
-    transaction_type: TransactionType;
-    /**
-     * Position type (overnight, day).
-     */
-    position_type: PositionTypes;
-    /**
-     * Position quantity
-     */
-    quantity: string | number;
-    /**
-     * Current product code (NRML, MIS, CNC).
-     */
-    old_product: Product;
-    /**
-     * New Product code (NRML, MIS, CNC).
-     */
-    new_product: Product;
-  }) => Promise<boolean>;
+  convertPosition: (params: ConvertPositionParams) => Promise<boolean>;
 
   /**
    * Get list of order history.
@@ -1463,14 +1431,9 @@ export type Connect = {
    * @param params Order params.
    */
   exitOrder: (
-    variety: 'regular' | 'bo' | 'co' | 'amo' | 'iceberg' | 'auction',
+    variety: Varieties,
     order_id: string,
-    params?: {
-      /**
-       * Parent order id incase of multilegged orders.
-       */
-      parent_order_id?: string;
-    }
+    params?: ExitOrderParams
   ) => Promise<{ order_id: string }>;
 
   /**
@@ -1925,25 +1888,7 @@ export type Connect = {
    */
   modifyMFSIP: (
     sip_id: string,
-    params: {
-      /**
-       * Number of instalments to trigger.
-       * If set to -1, instalments are triggered at fixed intervals until the SIP is cancelled
-       */
-      instalments?: number;
-      /**
-       * Order frequency. weekly, monthly, or quarterly.
-       */
-      frequency?: 'weekly' | 'monthly' | 'quarterly';
-      /**
-       * If frequency is monthly, the day of the month (1, 5, 10, 15, 20, 25) to trigger the order on.
-       */
-      instalment_day?: string;
-      /**
-       * Pause or unpause an SIP (active or paused).
-       */
-      status?: 'active' | 'paused';
-    }
+    params: Order
   ) => Promise<{ sip_id: number }>;
 
   /**
@@ -1955,36 +1900,7 @@ export type Connect = {
   modifyOrder: (
     variety: Variety,
     order_id: number | string,
-    params: {
-      /**
-       * Order quantity
-       */
-      quantity?: number;
-      /**
-       * Order Price
-       */
-      price?: number;
-      /**
-       * Order type (NRML, SL, SL-M, MARKET).
-       */
-      order_type?: OrderType;
-      /**
-       * Order validity (DAY, IOC).
-       */
-      validity?: Validity;
-      /**
-       * Disclosed quantity
-       */
-      disclosed_quantity?: number;
-      /**
-       * Trigger price
-       */
-      trigger_price?: number;
-      /**
-       * Parent order id incase of multilegged orders.
-       */
-      parent_order_id?: string;
-    }
+    params: ModifyOrderParams
   ) => Promise<{ order_id: string }>;
 
   /**
@@ -2094,80 +2010,7 @@ export type Connect = {
    */
   placeOrder: (
     variety: Variety,
-    params: {
-      /**
-       * Exchange in which instrument is listed (NSE, BSE, NFO, BFO, CDS, MCX).
-       */
-      exchange: Exchanges;
-      /**
-       * Tradingsymbol of the instrument (ex. RELIANCE, INFY).
-       */
-      tradingsymbol: string;
-      /**
-       * Transaction type (BUY or SELL).
-       */
-      transaction_type: TransactionType;
-      /**
-       * Order quantity
-       */
-      quantity: number;
-      /**
-       * Product code (NRML, MIS, CNC).
-       */
-      product: Product;
-      /**
-       * Order type (LIMIT, SL, SL-M, MARKET).
-       */
-      order_type: OrderType;
-      /**
-       * Order validity (DAY, IOC).
-       */
-      validity?: Validity;
-      /**
-       * Order Price
-       */
-      price?: number;
-      /**
-       * Disclosed quantity
-       */
-      disclosed_quantity?: number;
-      /**
-       * Trigger price
-       */
-      trigger_price?: number;
-      /**
-       * Square off value (only for bracket orders)
-       */
-      squareoff?: number;
-      /**
-       * Stoploss value (only for bracket orders)
-       */
-      stoploss?: number;
-      /**
-       * Trailing stoploss value (only for bracket orders)
-       */
-      trailing_stoploss?: number;
-      /**
-       * Order validity in minutes for TTL validity orders
-       */
-      validity_ttl?: number;
-      /**
-       * Total number of legs for iceberg order variety
-       */
-      iceberg_legs?: number;
-      /**
-       * Split quantity for each iceberg leg order
-       */
-      iceberg_quantity?: number;
-      /**
-       * A unique identifier for a particular auction
-       */
-      auction_number?: number;
-      /**
-       * An optional tag to apply to an order to identify it (alphanumeric, max 20 chars)
-       */
-      tag?: string;
-    }
+    params: PlaceOrderParams
   ) => Promise<{ order_id: string }>;
 
   /**
